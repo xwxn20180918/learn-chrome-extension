@@ -85,3 +85,43 @@ h1 {
 * 将插件固定到菜单，然后点击图标右键，点击审查内容
 ![审查内容](./images/console1-hello-world.png)
 * 点击插件图标，弹窗出popup页面，然后在页面中右键点击检查按钮，和普通查看html页面的方式一样。
+
+## 设置更改content 页面
+新建文件夹 chrome2，将chrome1中的manifest.json、popup.html、popup.js、popup.css 复制到 chrome2 中。新增 content.js 和 content.css 文件。
+content 页面是扩展程序中，真正要处理的页面，也是tab页中要展示的页面。
+在manifest.json中添加content配置：
+``` json
+"content_scripts": [
+    {
+      "js": [ "content.js"],
+      "css":[ "content.css" ],
+      "matches": ["<all_urls>"]
+    }
+  ]
+```
+content.js 内容如下：
+``` js
+console.log('content.js hello everybody!');
+
+let newDiv = document.createElement('div');
+newDiv.innerHTML = 'hello everybody!';
+newDiv.id = 'newDiv';
+document.body.appendChild(newDiv);
+```
+content.css 内容如下：
+``` css
+#newDiv {
+  font-size: 36px;
+  color: burlywood;
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  text-align: center;
+  z-index: 9999;
+}
+```
+这样就可以动态修改用户打开的页面了。
+![content](./images/head-show-msg.png)
+安装插件后，每打开一个页面就能看到 hello everybody! 的消息显示在页面上。
+
+>>> content.js 文件中无法执行chrome.tab的相关API，比如 chrome.tabs.executeScript()、chrome.tabs.insertCSS()。
