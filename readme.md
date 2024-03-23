@@ -41,3 +41,47 @@ manifest.json 中的 action 配置如下：
     }
   },
 ```
+
+### 给popup页面设置js脚本、css样式
+在popup.html中添加如下代码：
+``` html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>显示出hello world</title>
+    <link rel="stylesheet" type="text/css" href="popup.css">
+</head>
+
+<body>
+    <h1>显示出hello world</h1>
+    <button id="clickBtn">点击按钮</button>
+    <script src="popup.js"></script>
+</body>
+
+</html>
+```
+chome1的扩展程序中，popup.html页面是独立的，不能写内联样式或者内部执行js，必须引用js、css等文件。
+添加 两个文件 popup.js、popup.css
+popup.js 内容如下：
+``` js
+console.log(document.getElementById('clickBtn'));
+document.getElementById('clickBtn').addEventListener('click', function () {
+  console.log('clicked');
+});
+```
+popup.css 内容如下：
+``` css
+h1 {
+    background-color: antiquewhite;
+    font-weight: 100;
+}
+```
+查看效果：
+![hello world](./images/style-hello-world.png)
+查看js的执行效果有2种方式：
+* 将插件固定到菜单，然后点击图标右键，点击审查内容
+![审查内容](./images/console1-hello-world.png)
+* 点击插件图标，弹窗出popup页面，然后在页面中右键点击检查按钮，和普通查看html页面的方式一样。
