@@ -25,3 +25,19 @@
 点击该插件，会打开一个popup页面，显示hello world
 ![hello world](./images/show-hello-world.png)
 至此完成了插件的开发、安装。完整代码在[这里](https://gitee.com/shenshuai89/learn-chrome-extension)
+
+### action 配置
+action 配置，是chrome1的扩展程序中最重要的配置。如果不添加action，那么chrome1的扩展程序将不能点击，放到插件上无任何反应。
+manifest.json 中的 action 配置如下：
+``` json
+"action": {
+    "default_popup": "popup.html", 
+    "default_title": "hello world", 
+    "default_icon": {  
+      "16": "/images/icon16.png",
+      "32": "/images/icon32.png",
+      "48": "/images/icon48.png",
+      "128": "/images/icon128.png"
+    }
+  },
+```
