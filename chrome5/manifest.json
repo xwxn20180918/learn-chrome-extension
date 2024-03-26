@@ -1,0 +1,19 @@
+{
+  "name": "background to content",
+  "description": "background js send msg to content js .",
+  "version": "1",
+  "manifest_version": 3,
+  "action": {
+    "default_icon": "icon.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["tabs"],
+  "content_scripts": [
+    {
+      "js": [ "content.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

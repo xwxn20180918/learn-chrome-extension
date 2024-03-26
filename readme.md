@@ -125,3 +125,14 @@ content.css 内容如下：
 安装插件后，每打开一个页面就能看到 hello everybody! 的消息显示在页面上。
 
 >>> content.js 文件中无法执行chrome.tab的相关API，比如 chrome.tabs.executeScript()、chrome.tabs.insertCSS()。
+
+## 消息传递
+* popup：
+  - chrome.tabs.sendMessage
+  - chrome.runtime.onMessage
+* content:
+  - chrome.runtime.sendMessage
+  - chrome.runtime.onMessage
+* background:
+  _ chrome.tabs.sendMessage
+  _ chrome.tabs.onMessage
