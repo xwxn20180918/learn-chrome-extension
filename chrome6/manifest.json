@@ -1,0 +1,14 @@
+{
+  "name": "右键快捷键",
+  "description": "使用上下文快捷键，打开右键菜单",
+  "version": "1",
+  "manifest_version": 3,
+  "action": {
+    "default_icon": "icon.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["tabs", "contextMenus", "storage"],
+  "host_permissions": ["http://*/*", "https://*/*"]
+}
