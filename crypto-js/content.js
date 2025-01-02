@@ -9,13 +9,13 @@ console.log('content.js hello everybody!');
 // </div>`;
 // newDiv.id = 'newDiv';
 // document.body.appendChild(newDiv);
-const cancelBtn = document.querySelector('#cancel');
-const rejectBtn = document.querySelector('#reject');
-cancelBtn.onclick = function() {
-  document.body.removeChild(newDiv);
-  chrome.storage.sync.set({ state: 'cancel' }, (data) => {
-  });
-}
+// const cancelBtn = document.querySelector('#cancel');
+// const rejectBtn = document.querySelector('#reject');
+// cancelBtn.onclick = function() {
+//   document.body.removeChild(newDiv);
+//   chrome.storage.sync.set({ state: 'cancel' }, (data) => {
+//   });
+// }
 function seatSize() {
   var w = Math.random() * document.documentElement.clientWidth;
   var h = Math.random() * document.documentElement.clientHeight;
@@ -28,10 +28,10 @@ function seatSize() {
     height: h
   };
 }
-rejectBtn.onclick = function() {
-  newDiv.style.bottom = Math.random() * 600 + 10 + "px";
-  newDiv.style.right = Math.random() * 1200 + 10 + "px";
-}
+// rejectBtn.onclick = function() {
+//   newDiv.style.bottom = Math.random() * 600 + 10 + "px";
+//   newDiv.style.right = Math.random() * 1200 + 10 + "px";
+// }
 // chrome.storage.sync.get({ state: '' }, (data) => {
 //   if (data.state === 'cancel') {
 //     document.body.removeChild(newDiv);
