@@ -1,0 +1,58 @@
+{
+  "name": "crypto-js-final解密",
+  "description": "crypto-js-final解密",
+  "version": "1.0.1",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "./images/logo.png",
+      "32": "./images/logo.png",
+      "48": "./images/logo.png",
+      "128": "./images/logo.png"
+    }
+  },
+  "icons": {
+    "16": "./images/logo.png",
+    "32": "./images/logo.png",
+    "48": "./images/logo.png"
+  },
+  "permissions": [
+    "tabs",
+    "storage",
+    "activeTab",
+    "idle"
+  ],
+  "background": {
+    "service_worker": "assets/background-6o6SZU4r.js"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "contentscript-loader-content-1U-a6k-K.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "matches": [
+        "*://*/*"
+      ]
+    }
+  ],
+  "externally_connectable": {
+    "matches": [
+      "*://*/*"
+    ]
+  },
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "resources": [
+        "assets/content-1U-a6k-K.js"
+      ],
+      "use_dynamic_url": true
+    }
+  ]
+}
