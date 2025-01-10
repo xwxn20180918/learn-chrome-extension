@@ -7,7 +7,10 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "vite-plugin-crx-mv3": "workspace:*",
-    "vite": "^6.0.6"
+    "vite": "^6.0.6",
+    "vite-plugin-crx-mv3": "0.1.8"
+  },
+  "dependencies": {
+    "crypto-js": "^4.2.0"
   }
 }

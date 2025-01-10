@@ -40,13 +40,13 @@ function seatSize() {
 
 chrome.runtime.sendMessage('get-user-data', (response) => {
   // 3. Got an asynchronous response with the data from the service worker
-  console.log('received user data', response);
+  // console.log('received user data', response);
   return response;
   //   initializeUI(response);
   // newDiv.innerHTML = response;
 });
 chrome.storage.sync.get({ namespaced: 'aaa' }, (data) => {
-  console.log(data, 'namespaced from background js');
+  // console.log(data, 'namespaced from background js');
 });
 
 

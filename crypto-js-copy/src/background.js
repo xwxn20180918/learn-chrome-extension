@@ -24,9 +24,9 @@ chrome.runtime.onInstalled.addListener(async () => {
   });
   // console.log(tabs)
   tabs &&
-    tabs.forEach((tab) => {
-      // console.log(tab, 'background js tab');
-    });
+  tabs.forEach((tab) => {
+    // console.log(tab, 'background js tab');
+  });
 
   // 3. 接收到content的消息后，通过 sendResponse将namespaced数据发送出去
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -58,19 +58,20 @@ chrome.runtime.onInstalled.addListener(async () => {
   })(); */
 
   // 可以设置数据到storage中， 可以将数据设置storage中进行传递
-  chrome.storage.sync.set({ namespaced: 'run background js storage' });
+  chrome.storage.sync.set({namespaced: 'run background js storage'});
 });
 
-function firstTest(sendResponse) {
-  sendResponse({
-    message: 'test'
-  });
-}
-chrome.runtime.onMessageExternal.addListener(
-  (request, sender, sendResponse) => {
-    console.log(request, sender, sendResponse, '11111111111111111')
-    if (request.type === 'test') {
-      console.log(11222)
-      return firstTest(sendResponse);
-    }
-  });
+// function firstTest(sendResponse) {
+//   sendResponse({
+//     message: 'test'
+//   });
+// }
+//
+// chrome.runtime.onMessageExternal.addListener(
+//   (request, sender, sendResponse) => {
+//     console.log(request, sender, sendResponse, '11111111111111111')
+//     if (request.type === 'test') {
+//       console.log(11222)
+//       return firstTest(sendResponse);
+//     }
+//   });

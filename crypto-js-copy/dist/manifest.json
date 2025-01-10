@@ -1,21 +1,21 @@
 {
-  "name": "crypto-js解密",
-  "description": "crypto-js解密",
-  "version": "1.0",
+  "name": "crypto-js-final解密",
+  "description": "crypto-js-final解密",
+  "version": "1.0.1",
   "manifest_version": 3,
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "./images/icon16.png",
-      "32": "./images/icon32.png",
-      "48": "./images/icon48.png",
-      "128": "./images/icon128.png"
+      "16": "./images/logo.png",
+      "32": "./images/logo.png",
+      "48": "./images/logo.png",
+      "128": "./images/logo.png"
     }
   },
   "icons": {
-    "16": "./images/icon16.png",
-    "32": "./images/icon16.png",
-    "48": "./images/icon16.png"
+    "16": "./images/logo.png",
+    "32": "./images/logo.png",
+    "48": "./images/logo.png"
   },
   "permissions": [
     "tabs",
@@ -24,12 +24,12 @@
     "idle"
   ],
   "background": {
-    "service_worker": "assets/background-BKbm02C7.js"
+    "service_worker": "assets/background-6o6SZU4r.js"
   },
   "content_scripts": [
     {
       "js": [
-        "contentscript-loader-content-BogZXqEH.js"
+        "contentscript-loader-content-1U-a6k-K.js"
       ],
       "css": [
         "content.css"
@@ -50,7 +50,7 @@
         "<all_urls>"
       ],
       "resources": [
-        "assets/content-BogZXqEH.js"
+        "assets/content-1U-a6k-K.js"
       ],
       "use_dynamic_url": true
     }
