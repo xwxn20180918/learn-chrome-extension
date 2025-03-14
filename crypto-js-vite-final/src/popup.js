@@ -79,6 +79,13 @@ document.getElementById('ytDecrypt').addEventListener('click', async function ()
   console.log(outputText.textContent, 'outputText.textContent')
 });
 
+document.getElementById('json').addEventListener('click',  function () {
+  const outputText = document.getElementById('outputText');
+  navigator.clipboard.writeText(outputText.textContent);
+  window.alert('复制成功');
+  window.open('https://www.json.cn/', 'blank');
+});
+
 // 接收消息
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const {action, payload} = request;
