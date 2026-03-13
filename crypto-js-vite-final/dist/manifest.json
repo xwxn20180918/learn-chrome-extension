@@ -1,50 +1,76 @@
 {
-  "name": "crypto-js-final解密",
-  "description": "crypto-js-final解密",
-  "version": "1.0.1",
   "manifest_version": 3,
+  "name": "tools工具",
+  "short_name": "tools工具",
+  "description": "tools工具",
+  "version": "1.0.1",
+  "version_name": "1.0.1",
+  "author": "Crypto Tools Team",
+  "homepage_url": "https://github.com/your-repo/crypto-js-extension",
   "action": {
     "default_popup": "popup.html",
+    "default_title": "Crypto JS 加解密工具",
     "default_icon": {
-      "16": "./images/logo.png",
-      "32": "./images/logo.png",
-      "48": "./images/logo.png",
-      "128": "./images/logo.png"
+      "16": "./images/icon16.png",
+      "32": "./images/icon32.png",
+      "48": "./images/icon48.png",
+      "128": "./images/icon128.png"
     }
   },
   "icons": {
-    "16": "./images/logo.png",
-    "32": "./images/logo.png",
-    "48": "./images/logo.png"
+    "16": "./images/icon16.png",
+    "32": "./images/icon32.png",
+    "48": "./images/icon48.png",
+    "128": "./images/icon128.png"
   },
   "permissions": [
     "tabs",
     "storage",
     "activeTab",
-    "idle"
+    "idle",
+    "clipboardWrite",
+    "clipboardRead"
+  ],
+  "host_permissions": [
+    "*://*/*"
   ],
   "background": {
-    "service_worker": "assets/background-6o6SZU4r.js"
+    "service_worker": "assets/background-6o6SZU4r.js",
+    "type": "module"
   },
   "content_scripts": [
     {
+      "matches": [
+        "*://*/*",
+        "<all_urls>"
+      ],
       "js": [
         "contentscript-loader-content-1U-a6k-K.js"
       ],
       "css": [
         "content.css"
       ],
+      "run_at": "document_end",
+      "all_frames": false
+    },
+    {
       "matches": [
-        "*://*/*"
+        "<all_urls>"
+      ],
+      "js": [
+        "content-dev.js"
       ]
     }
   ],
-  "externally_connectable": {
-    "matches": [
-      "*://*/*"
-    ]
-  },
   "web_accessible_resources": [
+    {
+      "resources": [
+        "images/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    },
     {
       "matches": [
         "<all_urls>"
@@ -54,5 +80,36 @@
       ],
       "use_dynamic_url": true
     }
+  ],
+  "externally_connectable": {
+    "matches": [
+      "*://*/*",
+      "https://*.json.cn/*"
+    ]
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+C",
+        "mac": "Command+Shift+C"
+      },
+      "description": "打开加解密工具"
+    }
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "minimum_chrome_version": "88",
+  "offline_enabled": true,
+  "incognito": "split",
+  "update_url": "https://clients2.google.com/service/update2/crx",
+  "omnibox": {
+    "keyword": "crypto"
+  },
+  "optional_permissions": [
+    "bookmarks",
+    "downloads",
+    "notifications",
+    "webNavigation"
   ]
 }

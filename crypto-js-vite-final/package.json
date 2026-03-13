@@ -11,6 +11,8 @@
     "vite-plugin-crx-mv3": "0.1.8"
   },
   "dependencies": {
-    "crypto-js": "^4.2.0"
+    "ali-oss": "^6.23.0",
+    "crypto-js": "^4.2.0",
+    "dayjs": "^1.11.20"
   }
 }
