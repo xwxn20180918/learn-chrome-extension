@@ -39,7 +39,7 @@
     "*://*/*"
   ],
   "background": {
-    "service_worker": "assets/background-6o6SZU4r.js",
+    "service_worker": "assets/background-DxTRr2L1.js",
     "type": "module"
   },
   "content_scripts": [

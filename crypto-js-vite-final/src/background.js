@@ -59,6 +59,19 @@ chrome.runtime.onInstalled.addListener(async () => {
 
   // 可以设置数据到storage中， 可以将数据设置storage中进行传递
   chrome.storage.sync.set({namespaced: 'run background js storage'});
+  
+  // Initialize view mode
+  chrome.storage.local.get(['viewMode'], (result) => {
+    const mode = result.viewMode || 'popup';
+    chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: mode === 'sidePanel' });
+  });
+});
+
+// Listen for view mode changes
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'SET_VIEW_MODE') {
+    chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: message.mode === 'sidePanel' });
+  }
 });
 
 // function firstTest(sendResponse) {

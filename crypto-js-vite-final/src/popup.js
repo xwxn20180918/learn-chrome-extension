@@ -314,6 +314,33 @@ let jsonViewer;
 function init() {
   console.log('Popup initialized');
   
+  // View Mode Logic
+  const viewModeRadios = document.getElementsByName('viewMode');
+  
+  // Initialize view mode from storage
+  chrome.storage.local.get(['viewMode'], (result) => {
+    const mode = result.viewMode || 'popup';
+    viewModeRadios.forEach(radio => {
+      if (radio.value === mode) {
+        radio.checked = true;
+      }
+    });
+  });
+
+  // Handle view mode change
+  viewModeRadios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      const mode = e.target.value;
+      chrome.storage.local.set({ viewMode: mode });
+      
+      // Send message to background to update panel behavior
+      chrome.runtime.sendMessage({
+        type: 'SET_VIEW_MODE',
+        mode: mode
+      });
+    });
+  });
+
   // Tab switching logic
   const tabBtns = document.querySelectorAll('.tab-btn');
   const tabContents = document.querySelectorAll('.tab-content');
