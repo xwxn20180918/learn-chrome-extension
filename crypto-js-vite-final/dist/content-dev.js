@@ -1,4 +1,4 @@
-var PORT=8182,MENIFEST_NAME='tools工具',RELOADPAGE=true;"use strict";
+var PORT=8181,MENIFEST_NAME='tools工具',RELOADPAGE=true;"use strict";
 
 // src/constants.ts
 var VITE_PLUGIN_CRX_MV3 = "vite-plugin-crx-mv3";

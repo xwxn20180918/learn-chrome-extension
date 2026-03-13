@@ -10,14 +10,18 @@
   "homepage_url": "https://github.com/your-repo/crypto-js-extension",
   
   "action": {
-    "default_popup": "../popup.html",
+    "default_popup": "popup.html",
     "default_title": "Crypto JS 加解密工具",
     "default_icon": {
-      "16": "./images/icon16.png",
-      "32": "./images/icon32.png",
-      "48": "./images/icon48.png",
-      "128": "./images/icon128.png"
+      "16": "images/icon16.png",
+      "32": "images/icon32.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
     }
+  },
+
+  "side_panel": {
+    "default_path": "popup.html"
   },
   
   "icons": {
@@ -33,7 +37,8 @@
     "activeTab",
     "idle",
     "clipboardWrite",
-    "clipboardRead"
+    "clipboardRead",
+    "sidePanel"
   ],
   
   "host_permissions": [

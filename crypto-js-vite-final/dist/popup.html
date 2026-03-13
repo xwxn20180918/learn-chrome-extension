@@ -5,8 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>加解密数据</title>
-  <script type="module" crossorigin src="/assets/popup-Bw9sb6bd.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/popup-BAj2jwxw.css">
+  <script type="module" crossorigin src="/assets/popup-eDlIhg5N.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/popup-B5DnAoq3.css">
 </head>
 
 <body>
@@ -16,6 +16,7 @@
     <div class="tabs">
       <button class="tab-btn active" data-tab="tab1">加解密数据</button>
       <button class="tab-btn" data-tab="tab2">文件</button>
+      <button class="tab-btn" data-tab="tab3">手机号</button>
     </div>
 
     <div id="tab1" class="tab-content active">
@@ -58,6 +59,56 @@
           <button id="uploadBtn">上传图片</button>
         </div>
         <div id="uploadStatus" class="upload-status"></div>
+      </div>
+    </div>
+
+    <div id="tab3" class="tab-content">
+      <div class="input-section">
+        <h2>手机号工具</h2>
+        <div class="phone-tools" style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px;">
+          <div class="tool-group" style="display: flex; gap: 10px; align-items: center;">
+            <button id="generatePhoneBtn" style="flex: 1; padding: 12px; border-radius: 8px; border: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; cursor: pointer; font-weight: 600;">生成随机手机号</button>
+            <input type="text" id="generatedPhone" readonly placeholder="点击生成" style="flex: 2; padding: 10px; border-radius: 8px; border: 1px solid #ddd;" />
+          </div>
+        </div>
+      </div>
+
+      <div class="input-section" style="margin-top: 20px;">
+        <h2>常用固定手机号</h2>
+        <div class="fixed-phones">
+          <div id="fixedPhoneList" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px;">
+            <!-- JS will populate this -->
+          </div>
+        </div>
+      </div>
+
+      <div class="input-section" style="margin-top: 20px;">
+        <h2>运营商选号</h2>
+        <div class="carrier-search" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+          <div style="display: flex; gap: 10px;">
+            <select id="provinceSelect" style="flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #ddd; outline: none; transition: border-color 0.2s;">
+              <option value="">选择省份</option>
+            </select>
+            <select id="citySelect" style="flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #ddd; outline: none; transition: border-color 0.2s;" disabled>
+              <option value="">选择城市</option>
+            </select>
+          </div>
+          
+          <div style="display: flex; gap: 10px;">
+            <select id="carrierSelect" style="flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #ddd; outline: none; transition: border-color 0.2s;">
+              <option value="">选择运营商</option>
+              <option value="ChinaMobile" selected>移动</option>
+              <option value="ChinaUnicom">联通</option>
+              <option value="ChinaTelecom">电信</option>
+              <option value="ChinaBroadnet">广电</option>
+            </select>
+            <button id="searchPhoneBtn" style="flex: 1; padding: 10px; border-radius: 6px; border: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; cursor: pointer; font-weight: 600; transition: opacity 0.2s;">查询号码</button>
+          </div>
+
+          <div id="searchResult" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 5px;">
+            <!-- Results will be rendered here -->
+          </div>
+        </div>
       </div>
     </div>
   </div>
