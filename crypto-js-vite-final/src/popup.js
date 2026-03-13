@@ -423,6 +423,26 @@ function init() {
     
     uploadToOSS(files[0]);
   });
+
+  // Phone Number Generator
+  addListener('generatePhoneBtn', () => {
+    const prefixes = ['130', '131', '132', '133', '134', '135', '136', '137', '138', '139', 
+                     '150', '151', '152', '153', '155', '156', '157', '158', '159', 
+                     '180', '181', '182', '183', '184', '185', '186', '187', '188', '189',
+                     '170', '171', '172', '173', '174', '175', '176', '177', '178',
+                     '190', '191', '192', '193', '195', '196', '197', '198', '199'];
+    const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+    // Generate remaining 8 digits
+    let suffix = '';
+    for (let i = 0; i < 8; i++) {
+      suffix += Math.floor(Math.random() * 10);
+    }
+    const phoneNumber = prefix + suffix;
+    const input = document.getElementById('generatedPhone');
+    if (input) {
+      input.value = phoneNumber;
+    }
+  });
 }
 
 // 确保DOM加载完成后执行初始化

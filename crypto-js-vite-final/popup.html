@@ -16,6 +16,7 @@
     <div class="tabs">
       <button class="tab-btn active" data-tab="tab1">加解密数据</button>
       <button class="tab-btn" data-tab="tab2">文件</button>
+      <button class="tab-btn" data-tab="tab3">手机号</button>
     </div>
 
     <div id="tab1" class="tab-content active">
@@ -58,6 +59,18 @@
           <button id="uploadBtn">上传图片</button>
         </div>
         <div id="uploadStatus" class="upload-status"></div>
+      </div>
+    </div>
+
+    <div id="tab3" class="tab-content">
+      <div class="input-section">
+        <h2>手机号工具</h2>
+        <div class="phone-tools" style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px;">
+          <div class="tool-group" style="display: flex; gap: 10px; align-items: center;">
+            <button id="generatePhoneBtn" style="flex: 1; padding: 12px; border-radius: 8px; border: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; cursor: pointer; font-weight: 600;">生成随机手机号</button>
+            <input type="text" id="generatedPhone" readonly placeholder="点击生成" style="flex: 2; padding: 10px; border-radius: 8px; border: 1px solid #ddd;" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
