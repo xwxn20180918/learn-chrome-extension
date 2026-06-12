@@ -5,8 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>加解密数据</title>
-  <script type="module" crossorigin src="/assets/popup-BwYVt0e_.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/popup-CWscYVuS.css">
+  <script type="module" crossorigin src="/assets/popup-DJ9KYBns.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/popup-iYb6m-Bx.css">
 </head>
 
 <body>
@@ -29,6 +29,7 @@
       <button class="tab-btn active" data-tab="tab1">加解密数据</button>
       <button class="tab-btn" data-tab="tab2">文件</button>
       <button class="tab-btn" data-tab="tab3">手机号</button>
+      <button class="tab-btn" data-tab="tab4">链接配置</button>
     </div>
 
     <div id="tab1" class="tab-content active">
@@ -121,6 +122,66 @@
             <!-- Results will be rendered here -->
           </div>
         </div>
+      </div>
+    </div>
+
+    <div id="tab4" class="tab-content">
+      <div class="input-section">
+        <div class="section-title-row">
+          <h2>链接配置</h2>
+          <button id="refreshCurrentUrl" class="small-action-btn">刷新当前链接</button>
+        </div>
+        <label for="linkCurrentUrl">当前地址栏URL</label>
+        <textarea
+          id="linkCurrentUrl"
+          rows="4"
+          readonly
+          placeholder="读取当前浏览器标签页地址栏URL"></textarea>
+        <div class="button-container link-action-grid">
+          <button id="replaceMacroParamsBtn">替换宏参数</button>
+          <button id="parseLandingUrlBtn">解析URL参数</button>
+        </div>
+        <div id="linkResultSummary" class="link-result-summary is-empty">
+          <div class="link-result-main">
+            <span id="linkResultBadge" class="link-result-badge">待操作</span>
+            <div class="link-result-text">
+              <strong id="linkResultTitle">暂无处理结果</strong>
+              <span id="linkResultMessage">完成链接操作后，结果会显示在这里。</span>
+            </div>
+          </div>
+          <div id="linkResultUrl" class="link-result-url"></div>
+          <button id="copyLinkSummaryBtn" class="small-action-btn link-summary-copy" disabled>复制新URL</button>
+        </div>
+      </div>
+
+      <div class="input-section">
+        <label for="manualParamsInput">手动添加/覆盖参数</label>
+        <textarea
+          id="manualParamsInput"
+          rows="4"
+          placeholder="支持一行一个 key=value，也支持 foo=1&bar=2；同名参数会覆盖原值"></textarea>
+        <button id="applyManualParamsBtn">应用参数到地址栏</button>
+      </div>
+
+      <div class="input-section">
+        <label for="linkPrefixSelect">替换链接地址前缀</label>
+        <div class="link-prefix-row">
+          <select id="linkPrefixSelect"></select>
+          <button id="replacePrefixBtn">替换前缀</button>
+        </div>
+      </div>
+
+      <div class="output-section">
+        <div class="section-title-row">
+          <label for="linkOutput">详细结果</label>
+          <button id="copyLinkResultBtn" class="small-action-btn">复制结果</button>
+        </div>
+        <textarea
+          id="linkOutput"
+          rows="5"
+          readonly
+          placeholder="显示变更前/变更后URL或解析结果"></textarea>
+        <div id="linkParamTable" class="link-param-table"></div>
       </div>
     </div>
   </div>

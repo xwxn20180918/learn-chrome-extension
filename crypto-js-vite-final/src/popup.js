@@ -2,6 +2,14 @@ console.log(document.getElementById('clickBtn'));
 import CryptoJS from 'crypto-js';
 import OSS from 'ali-oss';
 import dayjs from 'dayjs';
+import { createLinkResultSummary } from './linkConfigFeedback.mjs';
+import {
+  LINK_PREFIX_OPTIONS,
+  applyManualParams,
+  parseLandingUrl,
+  replaceMacroParams,
+  replaceUrlPrefix,
+} from './linkConfigTools.mjs';
 
 const llgIv = 'yZM2mn0akhcq4VQK';
 const llgSecret = 'KEYTphIWNO1D9LfMsHoi0by3AZcR5tvu';
@@ -387,6 +395,8 @@ function init() {
     }
   };
 
+  initLinkConfigTools(addListener);
+
   addListener('llgEncrypt', async function () {
     const element = document.getElementById('inputText');
     const result = llgEncrypt(JSON.stringify(element.value));
@@ -539,6 +549,271 @@ function init() {
 
   // Carrier Phone Search Logic
   initCarrierSearch();
+}
+
+async function getActiveBrowserTab() {
+  const [tab] = await chrome.tabs.query({
+    active: true,
+    currentWindow: true
+  });
+
+  if (!tab || !tab.id) {
+    throw new Error('未获取到当前浏览器标签页');
+  }
+
+  if (!tab.url) {
+    throw new Error('当前标签页没有可读取的URL');
+  }
+
+  currentTab = tab;
+  return tab;
+}
+
+function getLinkConfigElements() {
+  return {
+    currentUrl: document.getElementById('linkCurrentUrl'),
+    manualParams: document.getElementById('manualParamsInput'),
+    prefixSelect: document.getElementById('linkPrefixSelect'),
+    output: document.getElementById('linkOutput'),
+    paramTable: document.getElementById('linkParamTable'),
+    copyBtn: document.getElementById('copyLinkResultBtn'),
+    summary: document.getElementById('linkResultSummary'),
+    summaryBadge: document.getElementById('linkResultBadge'),
+    summaryTitle: document.getElementById('linkResultTitle'),
+    summaryMessage: document.getElementById('linkResultMessage'),
+    summaryUrl: document.getElementById('linkResultUrl'),
+    summaryCopyBtn: document.getElementById('copyLinkSummaryBtn'),
+  };
+}
+
+function setLinkSummary(summaryInput) {
+  const {
+    summary,
+    summaryBadge,
+    summaryTitle,
+    summaryMessage,
+    summaryUrl,
+    summaryCopyBtn,
+  } = getLinkConfigElements();
+
+  if (!summary || !summaryBadge || !summaryTitle || !summaryMessage || !summaryUrl || !summaryCopyBtn) {
+    return;
+  }
+
+  const summaryState = createLinkResultSummary(summaryInput);
+  summary.className = `link-result-summary is-${summaryState.type}`;
+  summaryBadge.textContent = summaryState.title;
+  summaryTitle.textContent = summaryState.title;
+  summaryMessage.textContent = summaryState.message;
+  summaryUrl.textContent = summaryState.url;
+  summaryUrl.title = summaryState.url;
+  summaryCopyBtn.disabled = !summaryState.url;
+  summaryCopyBtn.dataset.copyUrl = summaryState.url;
+}
+
+function setLinkOutput(message, isError = false, summaryInput = null) {
+  const { output } = getLinkConfigElements();
+  if (!output) return;
+
+  output.value = message;
+  output.classList.toggle('link-error-output', isError);
+
+  if (summaryInput) {
+    setLinkSummary(summaryInput);
+  }
+}
+
+function clearLinkParamTable() {
+  const { paramTable } = getLinkConfigElements();
+  if (!paramTable) return;
+
+  paramTable.innerHTML = '';
+  paramTable.classList.remove('active');
+}
+
+function formatUrlChange(title, beforeUrl, afterUrl) {
+  return `${title}\n\n变更前：\n${beforeUrl}\n\n变更后：\n${afterUrl}`;
+}
+
+function renderParamTable(params) {
+  const { paramTable } = getLinkConfigElements();
+  if (!paramTable) return;
+
+  paramTable.innerHTML = '';
+
+  if (params.length === 0) {
+    const emptyRow = document.createElement('div');
+    emptyRow.className = 'link-param-row';
+    const keyCell = document.createElement('div');
+    keyCell.className = 'link-param-key';
+    keyCell.textContent = '参数';
+    const valueCell = document.createElement('div');
+    valueCell.className = 'link-param-value';
+    valueCell.textContent = '当前链接没有查询参数';
+    emptyRow.appendChild(keyCell);
+    emptyRow.appendChild(valueCell);
+    paramTable.appendChild(emptyRow);
+  } else {
+    params.forEach(({ key, value }) => {
+      const row = document.createElement('div');
+      row.className = 'link-param-row';
+      const keyCell = document.createElement('div');
+      keyCell.className = 'link-param-key';
+      keyCell.textContent = key;
+      const valueCell = document.createElement('div');
+      valueCell.className = 'link-param-value';
+      valueCell.textContent = value;
+      row.appendChild(keyCell);
+      row.appendChild(valueCell);
+      paramTable.appendChild(row);
+    });
+  }
+
+  paramTable.classList.add('active');
+}
+
+function renderLandingUrlResult(url) {
+  const result = parseLandingUrl(url);
+  setLinkOutput([
+    'URL参数解析',
+    '',
+    `完整链接：${result.href}`,
+    `协议：${result.protocol}`,
+    `域名：${result.host}`,
+    `路径：${result.path || '/'}`,
+    `Hash：${result.hash || '无'}`,
+    `参数数量：${result.params.length}`,
+  ].join('\n'), false, {
+    type: 'parse',
+    protocol: result.protocol,
+    host: result.host,
+    path: result.path || '/',
+    paramCount: result.params.length,
+  });
+  renderParamTable(result.params);
+}
+
+async function refreshLinkConfigUrl() {
+  const { currentUrl } = getLinkConfigElements();
+  if (!currentUrl) return;
+
+  const tab = await getActiveBrowserTab();
+  currentUrl.value = tab.url;
+  clearLinkParamTable();
+  setLinkOutput('已读取当前地址栏URL', false, {
+    type: 'success',
+    title: '已读取当前地址栏URL',
+    url: tab.url,
+  });
+}
+
+async function applyCurrentTabUrlChange(title, transformUrl) {
+  const { currentUrl } = getLinkConfigElements();
+  const tab = await getActiveBrowserTab();
+  const beforeUrl = tab.url;
+  const afterUrl = transformUrl(beforeUrl);
+
+  if (afterUrl === beforeUrl) {
+    if (currentUrl) currentUrl.value = beforeUrl;
+    clearLinkParamTable();
+    setLinkOutput(`${title}\n\n当前链接没有可处理的变化。`, false, {
+      type: 'no-change',
+      title,
+    });
+    return;
+  }
+
+  await chrome.tabs.update(tab.id, { url: afterUrl });
+  if (currentUrl) currentUrl.value = afterUrl;
+  clearLinkParamTable();
+  setLinkOutput(formatUrlChange(title, beforeUrl, afterUrl), false, {
+    type: 'success',
+    title,
+    url: afterUrl,
+  });
+}
+
+function initLinkConfigTools(addListener) {
+  const elements = getLinkConfigElements();
+  if (!elements.currentUrl || !elements.prefixSelect || !elements.output) {
+    return;
+  }
+
+  LINK_PREFIX_OPTIONS.forEach((prefix) => {
+    const option = document.createElement('option');
+    option.value = prefix;
+    option.textContent = prefix;
+    elements.prefixSelect.appendChild(option);
+  });
+
+  const runSafely = async (task) => {
+    try {
+      await task();
+    } catch (error) {
+      clearLinkParamTable();
+      setLinkOutput(error.message || '链接处理失败', true, {
+        type: 'error',
+        message: error.message || '链接处理失败',
+      });
+    }
+  };
+
+  addListener('refreshCurrentUrl', () => runSafely(refreshLinkConfigUrl));
+
+  addListener('replaceMacroParamsBtn', () => runSafely(() => {
+    return applyCurrentTabUrlChange('宏参数已替换', replaceMacroParams);
+  }));
+
+  addListener('parseLandingUrlBtn', () => runSafely(async () => {
+    const tab = await getActiveBrowserTab();
+    elements.currentUrl.value = tab.url;
+    renderLandingUrlResult(tab.url);
+  }));
+
+  addListener('applyManualParamsBtn', () => runSafely(() => {
+    const paramsText = elements.manualParams ? elements.manualParams.value : '';
+    if (!paramsText.trim()) {
+      throw new Error('请输入需要添加或覆盖的参数');
+    }
+    return applyCurrentTabUrlChange('参数已应用到地址栏', (url) => {
+      return applyManualParams(url, paramsText);
+    });
+  }));
+
+  addListener('replacePrefixBtn', () => runSafely(() => {
+    const prefix = elements.prefixSelect.value;
+    return applyCurrentTabUrlChange('链接前缀已替换', (url) => {
+      return replaceUrlPrefix(url, prefix);
+    });
+  }));
+
+  addListener('copyLinkResultBtn', () => runSafely(async () => {
+    const text = elements.output.value.trim();
+    if (!text) {
+      throw new Error('暂无可复制的处理结果');
+    }
+    await navigator.clipboard.writeText(text);
+    const originalText = elements.copyBtn.textContent;
+    elements.copyBtn.textContent = '已复制';
+    setTimeout(() => {
+      elements.copyBtn.textContent = originalText;
+    }, 1200);
+  }));
+
+  addListener('copyLinkSummaryBtn', () => runSafely(async () => {
+    const text = elements.summaryCopyBtn.dataset.copyUrl || '';
+    if (!text) {
+      throw new Error('暂无可复制的新URL');
+    }
+    await navigator.clipboard.writeText(text);
+    const originalText = elements.summaryCopyBtn.textContent;
+    elements.summaryCopyBtn.textContent = '已复制';
+    setTimeout(() => {
+      elements.summaryCopyBtn.textContent = originalText;
+    }, 1200);
+  }));
+
+  runSafely(refreshLinkConfigUrl);
 }
 
 // Carrier Search Implementation
