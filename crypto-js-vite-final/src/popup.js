@@ -2,6 +2,7 @@ console.log(document.getElementById('clickBtn'));
 import CryptoJS from 'crypto-js';
 import OSS from 'ali-oss';
 import dayjs from 'dayjs';
+import { decryptLlgStrPhone } from './llgStrTools.mjs';
 import { createLinkResultSummary } from './linkConfigFeedback.mjs';
 import {
   LINK_PREFIX_OPTIONS,
@@ -10,6 +11,11 @@ import {
   replaceMacroParams,
   replaceUrlPrefix,
 } from './linkConfigTools.mjs';
+import {
+  formatBatchUploadJson,
+  getFileExtension,
+  normalizeUploadPath,
+} from './uploadTools.mjs';
 
 const llgIv = 'yZM2mn0akhcq4VQK';
 const llgSecret = 'KEYTphIWNO1D9LfMsHoi0by3AZcR5tvu';
@@ -409,6 +415,12 @@ function init() {
     showOutput(result, true);
   });
 
+  addListener('llgStrDecrypt', async function () {
+    const element = document.getElementById('inputText');
+    const result = decryptLlgStrPhone(element.value);
+    showOutput(result.toString(), false);
+  });
+
   addListener('ytEncrypt', async function () {
     const element = document.getElementById('inputText');
     const result = ytEncrypt(JSON.stringify(element.value));
@@ -459,6 +471,44 @@ function init() {
     }
     
     uploadToOSS(files[0]);
+  });
+
+  const batchFileInput = document.getElementById('batchFileInput');
+  if (batchFileInput) {
+    batchFileInput.addEventListener('change', () => {
+      renderBatchFileSummary(Array.from(batchFileInput.files || []));
+    });
+  }
+
+  addListener('batchUploadBtn', () => {
+    const files = Array.from(batchFileInput?.files || []);
+    if (files.length === 0) {
+      setBatchUploadStatus('请先选择需要上传的文件', true);
+      return;
+    }
+    uploadBatchToOSS(files);
+  });
+
+  addListener('copyBatchJsonBtn', async () => {
+    const output = document.getElementById('batchUploadJson');
+    const copyBtn = document.getElementById('copyBatchJsonBtn');
+    const content = output?.value.trim() || '';
+
+    if (!content) {
+      setBatchUploadStatus('暂无可复制的JSON内容', true);
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(content);
+      const originalText = copyBtn.textContent;
+      copyBtn.textContent = '已复制';
+      setTimeout(() => {
+        copyBtn.textContent = originalText;
+      }, 1200);
+    } catch (error) {
+      setBatchUploadStatus(`复制失败: ${error.message}`, true);
+    }
   });
 
   // Phone Number Generator
@@ -1032,13 +1082,36 @@ const getOSSConfig = async () => {
   }
 };
 
+const createOSSUploadContext = async () => {
+  const res = await getOSSConfig();
+  const decryptedRes = llgDecrypt(res);
+  const jsonRes = JSON.parse(decryptedRes);
+  const data = jsonRes.data;
+
+  if (!data) {
+    throw new Error('OSS配置无效');
+  }
+
+  return {
+    data,
+    client: new OSS({
+      region: data.Region,
+      accessKeyId: data.AccessKeyId,
+      accessKeySecret: data.AccessKeySecret,
+      stsToken: data.SecurityToken,
+      bucket: data.Bucket
+    }),
+    now: dayjs().locale('zh-cn').format('YYYY/MM/DD/HH'),
+  };
+};
+
 const uploadSingleFile = async (file, client, data, customPath, now) => {
-  const suffix = file.name.slice(file.name.lastIndexOf('.'));
+  const suffix = getFileExtension(file.name);
   const signature = Date.now() + Math.random().toString(36).substring(7);
-  const urlPath = `${customPath}/${now}/${signature}${suffix}`;
+  const urlPath = `${normalizeUploadPath(customPath)}/${now}/${signature}${suffix}`;
   
   await client.put(urlPath, file);
-  return `${data.Hostname}/${urlPath}`;
+  return `${data.Hostname.replace(/\/$/, '')}/${urlPath}`;
 };
 
 const uploadToOSS = async (file) => {
@@ -1049,22 +1122,9 @@ const uploadToOSS = async (file) => {
     statusDiv.textContent = '正在获取配置...';
     uploadBtn.disabled = true;
 
-    const res = await getOSSConfig();
-    const decryptedRes = llgDecrypt(res);
-    const jsonRes = JSON.parse(decryptedRes);
-    const data = jsonRes.data;
+    const { client, data, now } = await createOSSUploadContext();
 
     statusDiv.textContent = '正在上传...';
-
-    const client = new OSS({
-      region: data.Region,
-      accessKeyId: data.AccessKeyId,
-      accessKeySecret: data.AccessKeySecret,
-      stsToken: data.SecurityToken,
-      bucket: data.Bucket
-    });
-
-    const now = dayjs().locale('zh-cn').format('YYYY/MM/DD/HH');
     const customPath = document.getElementById('uploadPath').value || 'upload';
 
     const fileUrl = await uploadSingleFile(file, client, data, customPath, now);
@@ -1103,6 +1163,106 @@ const uploadToOSS = async (file) => {
     console.error('Upload failed:', error);
     statusDiv.textContent = `上传失败: ${error.message}`;
     statusDiv.style.color = 'red';
+  } finally {
+    uploadBtn.disabled = false;
+  }
+};
+
+function renderBatchFileSummary(files) {
+  const summary = document.getElementById('batchFileSummary');
+  if (!summary) return;
+
+  if (files.length === 0) {
+    summary.textContent = '暂未选择文件';
+    summary.title = '';
+    return;
+  }
+
+  const fileNames = files.map((file) => file.name);
+  const visibleNames = fileNames.slice(0, 5).join('、');
+  const remainingText = fileNames.length > 5 ? ` 等${fileNames.length}个文件` : '';
+  summary.textContent = `已选择 ${fileNames.length} 个文件：${visibleNames}${remainingText}`;
+  summary.title = fileNames.join('\n');
+}
+
+function setBatchUploadStatus(message, isError = false) {
+  const status = document.getElementById('batchUploadStatus');
+  if (!status) return;
+
+  status.textContent = message;
+  status.classList.toggle('is-error', isError);
+}
+
+function renderBatchUploadErrors(failures) {
+  const container = document.getElementById('batchUploadErrors');
+  if (!container) return;
+
+  container.innerHTML = '';
+  if (failures.length === 0) return;
+
+  const title = document.createElement('strong');
+  title.textContent = `失败文件（${failures.length}）`;
+  container.appendChild(title);
+
+  failures.forEach(({ fileName, message }) => {
+    const row = document.createElement('div');
+    row.textContent = `${fileName}: ${message}`;
+    container.appendChild(row);
+  });
+}
+
+const uploadBatchToOSS = async (files) => {
+  const uploadBtn = document.getElementById('batchUploadBtn');
+  const output = document.getElementById('batchUploadJson');
+  const copyBtn = document.getElementById('copyBatchJsonBtn');
+  const customPath = document.getElementById('batchUploadPath')?.value || 'upload';
+
+  uploadBtn.disabled = true;
+  copyBtn.disabled = true;
+  output.value = '';
+  renderBatchUploadErrors([]);
+
+  try {
+    setBatchUploadStatus('正在获取上传配置...');
+    const { client, data, now } = await createOSSUploadContext();
+    let completed = 0;
+
+    const tasks = files.map((file) => {
+      return uploadSingleFile(file, client, data, customPath, now).finally(() => {
+        completed += 1;
+        setBatchUploadStatus(`正在上传 ${completed}/${files.length}...`);
+      });
+    });
+
+    const settledResults = await Promise.allSettled(tasks);
+    const successes = [];
+    const failures = [];
+
+    settledResults.forEach((result, index) => {
+      if (result.status === 'fulfilled') {
+        successes.push({
+          fileName: files[index].name,
+          url: result.value,
+        });
+      } else {
+        failures.push({
+          fileName: files[index].name,
+          message: result.reason?.message || '上传失败',
+        });
+      }
+    });
+
+    output.value = formatBatchUploadJson(successes);
+    copyBtn.disabled = successes.length === 0;
+    renderBatchUploadErrors(failures);
+
+    const statusText = failures.length === 0
+      ? `全部上传完成，共 ${successes.length} 个文件`
+      : `上传完成：成功 ${successes.length} 个，失败 ${failures.length} 个`;
+    setBatchUploadStatus(statusText, successes.length === 0);
+  } catch (error) {
+    console.error('Batch upload failed:', error);
+    setBatchUploadStatus(`批量上传失败: ${error.message}`, true);
   } finally {
     uploadBtn.disabled = false;
   }

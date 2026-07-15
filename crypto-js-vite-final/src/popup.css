@@ -237,12 +237,12 @@ button:active {
 }
 
 /* 特定按钮样式 */
-#llgEncrypt, #llgDecrypt {
+#llgEncrypt, #llgDecrypt, #llgStrDecrypt {
     background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
     box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
 }
 
-#llgEncrypt:hover, #llgDecrypt:hover {
+#llgEncrypt:hover, #llgDecrypt:hover, #llgStrDecrypt:hover {
     box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
 }
 
@@ -571,16 +571,20 @@ textarea::-webkit-scrollbar-thumb:hover,
     margin-top: 15px;
 }
 
-#uploadBtn {
+#uploadBtn,
+#batchUploadBtn {
     background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
     box-shadow: 0 4px 15px rgba(0, 176, 155, 0.3);
 }
 
-#uploadBtn:hover {
+#uploadBtn:hover,
+#batchUploadBtn:hover {
     box-shadow: 0 8px 25px rgba(0, 176, 155, 0.4);
 }
 
-#uploadBtn:disabled {
+#uploadBtn:disabled,
+#batchUploadBtn:disabled,
+#copyBatchJsonBtn:disabled {
     background: #ccc;
     cursor: not-allowed;
     transform: none;
@@ -592,6 +596,10 @@ textarea::-webkit-scrollbar-thumb:hover,
     font-weight: 600;
     font-size: 14px;
     min-height: 20px;
+}
+
+.upload-status.is-error {
+    color: #c53030;
 }
 
 .upload-result {
@@ -619,7 +627,10 @@ textarea::-webkit-scrollbar-thumb:hover,
     pointer-events: none;
 }
 
-#fileInput, #uploadPath {
+#fileInput,
+#uploadPath,
+#batchFileInput,
+#batchUploadPath {
     padding: 10px;
     background: #f8f9fa;
     border: 1px solid #e1e5e9;
@@ -627,10 +638,50 @@ textarea::-webkit-scrollbar-thumb:hover,
     cursor: pointer;
 }
 
-#uploadPath {
+#uploadPath,
+#batchUploadPath {
     cursor: text;
     padding-left: 90px; /* Space for the prefix */
     width: 100%;
+}
+
+.batch-file-summary {
+    min-height: 38px;
+    padding: 9px 11px;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+    background: #f8f9fa;
+    color: #4a5568;
+    font-size: 12px;
+    line-height: 1.5;
+    word-break: break-all;
+}
+
+.batch-upload-result {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e1e5e9;
+}
+
+.batch-upload-result .section-title-row {
+    margin-bottom: 8px;
+}
+
+#batchUploadJson {
+    background: #f8f9fa;
+    min-height: 180px;
+}
+
+.batch-upload-errors {
+    margin-top: 10px;
+    color: #c53030;
+    font-size: 12px;
+    line-height: 1.6;
+    word-break: break-all;
+}
+
+.batch-upload-errors:empty {
+    display: none;
 }
 
 /* Result List Styles */

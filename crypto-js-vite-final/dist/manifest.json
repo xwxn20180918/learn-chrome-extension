@@ -56,6 +56,14 @@
       ],
       "run_at": "document_end",
       "all_frames": false
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content-dev.js"
+      ]
     }
   ],
   "web_accessible_resources": [
