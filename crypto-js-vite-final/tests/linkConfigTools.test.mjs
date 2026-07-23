@@ -9,20 +9,53 @@ import {
 } from '../src/linkConfigTools.mjs';
 
 test('replaceMacroParams replaces known macro keys with six digit numbers only', () => {
-  const input = 'https://example.com/page?adv_id={adv_id}&plan_id=${plan_id}&click_id=__CLICK__&keep=abc';
+  const input =
+    'https://example.com/page?platform=ocean_engine&adv_id={adv_id}&plan_id=${plan_id}&click_id=__CLICK__&keep=abc';
   const result = replaceMacroParams(input);
   const parsed = new URL(result);
 
   assert.match(parsed.searchParams.get('adv_id'), /^\d{6}$/);
   assert.match(parsed.searchParams.get('plan_id'), /^\d{6}$/);
   assert.match(parsed.searchParams.get('click_id'), /^\d{6}$/);
+  assert.equal(parsed.searchParams.get('platform'), 'ocean_engine');
   assert.equal(parsed.searchParams.get('keep'), 'abc');
+  assert.equal(parsed.searchParams.get('dmp'), '1');
 });
 
-test('replaceMacroParams leaves missing macro keys untouched', () => {
-  const input = 'https://example.com/page?keep=abc';
+test('replaceMacroParams adds dmp for ocean engine links when macro keys are missing', () => {
+  const input = 'https://example.com/page?platform=ocean_engine&keep=abc';
+  const result = new URL(replaceMacroParams(input));
 
-  assert.equal(replaceMacroParams(input), input);
+  assert.equal(result.searchParams.get('keep'), 'abc');
+  assert.equal(result.searchParams.get('dmp'), '1');
+});
+
+test('replaceMacroParams overwrites an existing dmp value for ocean engine links', () => {
+  const input = 'https://example.com/page?platform=ocean_engine&adv_id={adv_id}&dmp=0';
+  const result = new URL(replaceMacroParams(input));
+
+  assert.equal(result.searchParams.get('dmp'), '1');
+});
+
+test('replaceMacroParams does not add dmp for other or missing platforms', () => {
+  const inputs = [
+    'https://example.com/page?platform=tencent&adv_id={adv_id}',
+    'https://example.com/page?adv_id={adv_id}',
+  ];
+
+  inputs.forEach((input) => {
+    const result = new URL(replaceMacroParams(input));
+
+    assert.match(result.searchParams.get('adv_id'), /^\d{6}$/);
+    assert.equal(result.searchParams.has('dmp'), false);
+  });
+});
+
+test('replaceMacroParams preserves dmp for non-ocean-engine links', () => {
+  const input = 'https://example.com/page?platform=tencent&dmp=0';
+  const result = new URL(replaceMacroParams(input));
+
+  assert.equal(result.searchParams.get('dmp'), '0');
 });
 
 test('applyManualParams overwrites existing values and appends new values', () => {

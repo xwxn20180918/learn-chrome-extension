@@ -25,16 +25,18 @@ function createSixDigitNumber() {
 
 export function replaceMacroParams(url) {
   const parsed = parseUrl(url);
-  let hasReplacement = false;
 
   MACRO_PARAM_KEYS.forEach((key) => {
     if (parsed.searchParams.has(key)) {
       parsed.searchParams.set(key, createSixDigitNumber());
-      hasReplacement = true;
     }
   });
 
-  return hasReplacement ? parsed.toString() : url;
+  if (parsed.searchParams.get('platform') === 'ocean_engine') {
+    parsed.searchParams.set('dmp', '1');
+  }
+
+  return parsed.toString();
 }
 
 export function parseManualParams(paramsText) {
