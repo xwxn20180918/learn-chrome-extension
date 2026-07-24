@@ -16,6 +16,11 @@ import {
   getFileExtension,
   normalizeUploadPath,
 } from './uploadTools.mjs';
+import { utoDecrypt } from './utoCryptoTools.mjs';
+import {
+  formatOmctxOutput,
+  omctxDecrypt,
+} from './omctxCryptoTools.mjs';
 
 const llgIv = 'yZM2mn0akhcq4VQK';
 const llgSecret = 'KEYTphIWNO1D9LfMsHoi0by3AZcR5tvu';
@@ -431,6 +436,19 @@ function init() {
     const element = document.getElementById('inputText');
     const result = ytDecrypt(element.value);
     showOutput(result, true);
+  });
+
+  addListener('utoDecrypt', function () {
+    const element = document.getElementById('inputText');
+    const result = utoDecrypt(element.value);
+    showOutput(result === '' ? '' : JSON.stringify(result), result !== '');
+  });
+
+  addListener('omctxDecrypt', function () {
+    const element = document.getElementById('inputText');
+    const result = omctxDecrypt(element.value);
+    const output = formatOmctxOutput(result);
+    showOutput(output.content, output.isJSON);
   });
 
   addListener('xmjzEncrypt', async function () {

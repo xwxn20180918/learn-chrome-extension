@@ -246,12 +246,12 @@ button:active {
     box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
 }
 
-#ytEncrypt, #ytDecrypt {
+#ytEncrypt, #ytDecrypt, #utoDecrypt {
     background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
     box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
 }
 
-#ytEncrypt:hover, #ytDecrypt:hover {
+#ytEncrypt:hover, #ytDecrypt:hover, #utoDecrypt:hover {
     box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
 }
 
