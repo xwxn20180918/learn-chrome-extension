@@ -809,6 +809,91 @@ textarea::-webkit-scrollbar-thumb:hover,
     white-space: nowrap;
 }
 
+/* Identity Test Data */
+.identity-disclaimer {
+    margin: 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.identity-batch-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 18px;
+    margin-top: 12px;
+}
+
+.identity-record {
+    min-width: 0;
+    padding: 12px 0;
+    border-top: 1px solid #e5e7eb;
+}
+
+.identity-record-heading {
+    margin-bottom: 5px;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.identity-field-button {
+    width: 100%;
+    min-height: 30px;
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr) 40px;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 4px;
+    border-radius: 4px;
+    background: transparent;
+    color: #334155;
+    box-shadow: none;
+    text-align: left;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.identity-field-button::before {
+    display: none;
+}
+
+.identity-field-button:hover {
+    background: #f1f5f9;
+    box-shadow: none;
+    transform: none;
+}
+
+.identity-field-label {
+    color: #64748b;
+    font-size: 11px;
+}
+
+.identity-field-value {
+    min-width: 0;
+    overflow: hidden;
+    color: #0f172a;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 11px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.identity-copy-status {
+    width: 40px;
+    color: #2563eb;
+    font-size: 11px;
+    text-align: right;
+}
+
+.identity-copy-status.is-success {
+    color: #047857;
+}
+
+.identity-copy-status.is-error {
+    color: #b91c1c;
+}
+
 #linkCurrentUrl,
 #linkOutput {
     background: #f8f9fa;

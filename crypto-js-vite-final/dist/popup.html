@@ -5,8 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>加解密数据</title>
-  <script type="module" crossorigin src="/assets/popup-zP929gOo.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/popup-CLAuw6BS.css">
+  <script type="module" crossorigin src="/assets/popup-CdR4iZh7.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/popup-egUxFRJF.css">
 </head>
 
 <body>
@@ -29,6 +29,7 @@
       <button class="tab-btn active" data-tab="tab1">加解密数据</button>
       <button class="tab-btn" data-tab="tab2">文件</button>
       <button class="tab-btn" data-tab="tab3">手机号</button>
+      <button class="tab-btn" data-tab="tab5">身份证</button>
       <button class="tab-btn" data-tab="tab4">链接配置</button>
     </div>
 
@@ -151,6 +152,19 @@
             <!-- Results will be rendered here -->
           </div>
         </div>
+      </div>
+    </div>
+
+    <div id="tab5" class="tab-content">
+      <div class="input-section identity-section">
+        <div class="section-title-row">
+          <h2>身份证测试数据</h2>
+          <button id="refreshIdentityBatchBtn" class="small-action-btn">换一批</button>
+        </div>
+        <p class="identity-disclaimer">
+          以下姓名、手机号、身份证号和银行卡号均为随机虚构，仅供开发测试使用。
+        </p>
+        <div id="identityBatchList" class="identity-batch-list"></div>
       </div>
     </div>
 

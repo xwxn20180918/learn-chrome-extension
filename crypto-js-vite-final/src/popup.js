@@ -16,6 +16,7 @@ import {
   getFileExtension,
   normalizeUploadPath,
 } from './uploadTools.mjs';
+import { generateIdentityBatch } from './identityTools.mjs';
 import { utoDecrypt } from './utoCryptoTools.mjs';
 import {
   formatOmctxOutput,
@@ -407,6 +408,7 @@ function init() {
   };
 
   initLinkConfigTools(addListener);
+  initIdentityTools(addListener);
 
   addListener('llgEncrypt', async function () {
     const element = document.getElementById('inputText');
@@ -617,6 +619,90 @@ function init() {
 
   // Carrier Phone Search Logic
   initCarrierSearch();
+}
+
+function renderIdentityBatch(container) {
+  const fragment = document.createDocumentFragment();
+
+  generateIdentityBatch().forEach((record, index) => {
+    const item = document.createElement('div');
+    item.className = 'identity-record';
+
+    const heading = document.createElement('div');
+    heading.className = 'identity-record-heading';
+    heading.textContent = `测试数据 ${index + 1}`;
+    item.appendChild(heading);
+
+    [
+      ['姓名', record.name],
+      ['手机号', record.phone],
+      ['身份证', record.idNumber],
+      ['银行卡', record.bankCard],
+    ].forEach(([label, value]) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'identity-field-button';
+      button.dataset.copyValue = value;
+      button.title = `复制${label}`;
+
+      const labelElement = document.createElement('span');
+      labelElement.className = 'identity-field-label';
+      labelElement.textContent = label;
+
+      const valueElement = document.createElement('span');
+      valueElement.className = 'identity-field-value';
+      valueElement.textContent = value;
+
+      const statusElement = document.createElement('span');
+      statusElement.className = 'identity-copy-status';
+      statusElement.textContent = '复制';
+
+      button.append(labelElement, valueElement, statusElement);
+      item.appendChild(button);
+    });
+
+    fragment.appendChild(item);
+  });
+
+  container.replaceChildren(fragment);
+}
+
+function initIdentityTools(addListener) {
+  const container = document.getElementById('identityBatchList');
+
+  if (!container) {
+    return;
+  }
+
+  addListener('refreshIdentityBatchBtn', () => {
+    renderIdentityBatch(container);
+  });
+
+  container.addEventListener('click', async (event) => {
+    const button = event.target.closest('.identity-field-button');
+
+    if (!button || !container.contains(button)) {
+      return;
+    }
+
+    const status = button.querySelector('.identity-copy-status');
+
+    try {
+      await navigator.clipboard.writeText(button.dataset.copyValue);
+      status.textContent = '已复制';
+      status.classList.add('is-success');
+    } catch {
+      status.textContent = '失败';
+      status.classList.add('is-error');
+    }
+
+    setTimeout(() => {
+      status.textContent = '复制';
+      status.classList.remove('is-success', 'is-error');
+    }, 1200);
+  });
+
+  renderIdentityBatch(container);
 }
 
 async function getActiveBrowserTab() {
